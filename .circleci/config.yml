@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: frontend-node_modules
+          key: frontend-node_modules
       - run: |
           cd frontend
           npm install
@@ -51,7 +51,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: backend-node_modules
+          key: backend-node_modules
       - run: |
           cd backend
           npm install
