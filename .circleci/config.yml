@@ -32,9 +32,33 @@ jobs:
           paths: 
             - backend/node_modules
           key: backend-node_modules
+      
+  test-frontend:
+    docker:
+    steps:
+      - checkout
+      - restore_cache:
+        key: frontend-node_modules
+      - run: |
+        cd frontend
+        npm install
+        npm run test  
+
+  test-backend:
+    docker:
+    steps:
+      - checkout
+      - restore_cache:
+        key: backend-node_modules
+      - run: |
+        cd backend
+        npm install
+        npm run test
 
 workflows:
   say-hello-workflow:
     jobs:
       - build-frontend
       - build-backend
+      - test-frontend
+      - test-backend
