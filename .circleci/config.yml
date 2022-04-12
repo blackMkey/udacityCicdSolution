@@ -15,7 +15,7 @@ jobs:
       - save_cache:
           paths: 
             - frontend/node_modules
-          key: frontend-build
+          key: frontend-node_modules
 
   build-backend:
     docker:
@@ -27,10 +27,11 @@ jobs:
           command: |
              cd backend
              npm install
+             npm run build
       - save_cache:
           paths: 
             - backend/node_modules
-          key: backend-build
+          key: backend-node_modules
 
 workflows:
   say-hello-workflow:
