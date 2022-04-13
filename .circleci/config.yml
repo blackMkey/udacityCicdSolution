@@ -155,6 +155,39 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    environment:
+      - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
+      - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+      - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
+      - TYPEORM_PORT: "{{ lookup('env','TYPEORM_PORT') }}"
+      - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+      - TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
+      - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
+      - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+      - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["66:6a:7f:1c:7c:a5:bf:66:72:f8:b6:33:78:0a:69:c9"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+              apk add --update tar gzip ansible nodejs npm curl
+              pip install awscli
+      - run:
+          name: Configure server
+          command: |
+              cd .circleci/ansible
+              cat inventory.txt
+              ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+
 workflows:
   deploy-workflow:
     jobs:
