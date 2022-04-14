@@ -87,9 +87,6 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: basic_success_1
 
   test-backend:
     docker:
@@ -105,9 +102,6 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: basic_success_1
   
   scan-frontend:
     docker:
@@ -181,15 +175,15 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     environment:
-      - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
-      - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
-      - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
-      - TYPEORM_PORT: "{{ lookup('env','TYPEORM_PORT') }}"
-      - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
-      - TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
-      - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
-      - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
-      - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+      TYPEORM_MIGRATIONS: $TYPEORM_MIGRATIONS
+      TYPEORM_MIGRATIONS_DIR: $TYPEORM_MIGRATIONS_DIR
+      TYPEORM_CONNECTION: $TYPEORM_CONNECTION
+      TYPEORM_HOST: $TYPEORM_HOST
+      TYPEORM_USERNAME: $TYPEORM_USERNAME
+      TYPEORM_PASSWORD: $TYPEORM_PASSWORD
+      TYPEORM_DATABASE: $TYPEORM_DATABASE
+      TYPEORM_PORT: $TYPEORM_PORT
+      TYPEORM_ENTITIES: $TYPEORM_ENTITIES
     steps:
       - checkout
       - add_ssh_keys:
