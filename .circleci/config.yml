@@ -15,6 +15,7 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: << parameters.workflow_id >> "
+            aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
 
@@ -56,6 +57,8 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-nodeModules
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -72,7 +75,9 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-nodeModules
-      
+  
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -88,6 +93,8 @@ jobs:
           event: fail
           template: basic_fail_1
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -103,6 +110,8 @@ jobs:
           event: fail
           template: basic_fail_1
   
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -115,6 +124,8 @@ jobs:
           npm install
           npm audit fix --audit-level=critical
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -127,6 +138,8 @@ jobs:
           npm install
           npm audit fix --audit-level=critical
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -171,6 +184,8 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -204,6 +219,8 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
@@ -233,6 +250,8 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           bucket_key:  ${KVDB_BUCKET_KEY}
 
+  #---------------------------------------------------------------------------------------------  
+  #---------------------------------------------------------------------------------------------
   deploy-frontend:
     docker:
       - image: python:3.7-alpine3.11
@@ -270,6 +289,42 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           bucket_key:  ${KVDB_BUCKET_KEY}
 
+  #---------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------
+  deploy-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["66:6a:7f:1c:7c:a5:bf:66:72:f8:b6:33:78:0a:69:c9"]
+      - attach_workspace:
+        at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip ansible nodejs npm
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            mkdir .circleci/ansible/roles/configure-server/files
+            cp artifact.tar.gz .circleci/ansible/roles/configure-server/files
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          bucket_key:  ${KVDB_BUCKET_KEY}
+
 workflows:
   deploy-workflow:
     jobs:
@@ -290,4 +345,6 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
           requires: [run-migrations]
