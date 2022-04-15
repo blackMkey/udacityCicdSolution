@@ -313,8 +313,8 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            mkdir .circleci/ansible/roles/configure-server/files
-            cp artifact.tar.gz .circleci/ansible/roles/configure-server/files
+            sudo mkdir .circleci/ansible/roles/deploy/files
+            sudo cp artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
