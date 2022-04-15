@@ -1,4 +1,11 @@
 ---
+- name: "check app"
+  shell: |
+    pwd
+    cd ubuntu
+    pwd
+    cd home 
+    pwd
 - name: "upgrade packages."
   become: true
   apt:
@@ -22,10 +29,11 @@
 - name: "Copy backend artifact"
   copy:
     src: artifact.tar.gz
-    dest: ~/ubuntu/home
+    dest: /ubuntu/home
 
 - name: "run app"
   shell: |
+    pwd
     cd ~/ubuntu/home
     mkdir backend
     tar -xvf archive.tar.gz -C backend
