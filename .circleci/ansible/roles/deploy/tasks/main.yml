@@ -22,11 +22,11 @@
 - name: "Copy backend artifact"
   copy:
     src: artifact.tar.gz
-    dest: ~/home/ubuntu
+    dest: ~/ubuntu/home
 
 - name: "run app"
   shell: |
-    cd ~/home/ubuntu
+    cd ~/ubuntu/home
     mkdir backend
     tar -xvf archive.tar.gz -C backend
     cd backend/
