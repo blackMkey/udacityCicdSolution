@@ -22,7 +22,7 @@
 - name: "Copy backend artifact"
   copy:
     src: artifact.tar.gz
-    dest: ~/home/ubuntu/artifact.tar.gz
+    dest: ~/artifact.tar.gz
 
 - name: "run app"
   shell: |
