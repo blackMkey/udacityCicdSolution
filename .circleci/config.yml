@@ -421,8 +421,8 @@ jobs:
                 echo do not delete stack name: ${variable} 
               else
                 echo delete Stack: $variable 
-                unset OldWorkflowId
-                OldWorkflowID=$(sed -r 's/udapeople-.+-//g' <<< $variable)
+                unset OldWorkflowID
+                OldWorkflowID=$(echo $variable | sed -r 's/udapeople-.*-//g')
                 echo OldWorkflowID=${OldWorkflowID}
               fi
             done
