@@ -419,12 +419,12 @@ jobs:
             --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"    
 
-            if [[ "${OldWorkflowID}" =~ "${STACKS[@]}"  ]]
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}"  ]]
             then
-              echo "delete old stacks"
+              echo "do not delete old stacks"
               echo ${OldWorkflowID}
             else
-              echo "do not delete old stacks"
+              echo "delete stack"
               echo ${OldWorkflowID}
             fi
 
