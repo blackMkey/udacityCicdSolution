@@ -422,7 +422,7 @@ jobs:
               else
                 echo delete Stack: $variable 
                 unset OldWorkflowId
-                OldWorkflowID=$(sed -r 's/udapeople-.+-//g' <<< $variable)
+                OldWorkflowID=$(sed -r 's/udapeople-.+-//g' \<\<\< $variable)
                 echo OldWorkflowID=${OldWorkflowID}
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
                 aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
