@@ -1,5 +1,5 @@
 Github: https://github.com/blackMkey/udacityCicdSolution
 
-S3-url: http://udapeople-e100d8f.s3-website-us-east-1.amazonaws.com/#/employees
+S3-url: http://udapeople-2b8ad59.s3-website-us-east-1.amazonaws.com/#/employees
 
 
